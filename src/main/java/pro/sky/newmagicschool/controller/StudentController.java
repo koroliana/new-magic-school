@@ -34,6 +34,11 @@ public class StudentController {
         else return ResponseEntity.ok(students);
     }
 
+    @GetMapping("/age")
+    public Double getAverageStudentAge() {
+        return studentService.getAverageStudentAge();
+    }
+
     @GetMapping("/filter")
     public List<StudentDto> findByAgeBetween(@RequestParam int from, @RequestParam int to) {
         return studentService.getStudentsByAgeBetween(from, to);
@@ -91,12 +96,22 @@ public class StudentController {
         else return ResponseEntity.ok(studentDto);
     }
 
-    /*
+    @GetMapping("/count")
+    public Integer getStudentsByAge() {
+        return studentService.countStudents();
+    }
+
+    @GetMapping("/last")
+    public List<StudentDto> getLastStudents(@RequestParam(value = "count", defaultValue = "5") int count) {
+        return studentService.getLastStudents(Math.abs(count));
+    }
+
+
     @ExceptionHandler(Exception.class)
     public String ExceptionHandler(Exception e) {
         return e.getMessage();
     }
 
-     */
+
 
 }

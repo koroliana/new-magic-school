@@ -1,5 +1,6 @@
 package pro.sky.newmagicschool.service;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
@@ -100,6 +101,25 @@ public class StudentService {
                 .map(facultyMapper::toDto)
                 .orElseThrow(() -> new FacultyNotFoundException(id));
     }
+
+
+    public Integer countStudents() {
+        return studentRepository.countSchoolStudents();
+    }
+
+    public Double getAverageStudentAge() {
+        return studentRepository.countAverageAge();
+    }
+
+    public List<StudentDto> getLastStudents(int count) {
+        return studentRepository.getLastStudents(Pageable.ofSize(count))
+                .stream()
+                .map(studentMapper::toDto)
+                .collect(Collectors.toList());
+
+    }
+
+
 
     /*
       public StudentDtoOut uploadAvatar(long id, MultipartFile multipartFile) {
