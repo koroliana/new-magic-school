@@ -65,6 +65,10 @@ public class Student {
         this.faculty = faculty;
     }
 
+    public void deleteFaculty() {
+        this.faculty = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -3,6 +3,7 @@ package pro.sky.newmagicschool.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
 import pro.sky.newmagicschool.entity.Faculty;
 import pro.sky.newmagicschool.service.FacultyService;
@@ -19,31 +20,23 @@ public class FacultyController {
     }
 
     @GetMapping
-    public List<Faculty> findAll(@RequestParam(required = false) String color) {
+    public List<FacultyDto> findAll(@RequestParam(required = false) String color) {
         return facultyService.findAll(color);
-        /*
-        List <Faculty> faculties = facultyService.getFacultyByColor(color);
-        if (faculties == null) {
-            return ResponseEntity.notFound().build();
-        }
-        else return ResponseEntity.ok(faculties);
-
-         */
     }
 
     @GetMapping("/filter")
-    public List<Faculty> findByColorOrName(@RequestParam String colorOrName) {
+    public List<FacultyDto> findByColorOrName(@RequestParam String colorOrName) {
         return facultyService.getFacultyByColorOrName(colorOrName);
     }
 
 
     @GetMapping("{id}")
-    public ResponseEntity<Faculty> getFacultyInfo(@PathVariable Long id) {
-        Faculty faculty = facultyService.findFacultyById(id);
-        if (faculty==null){
+    public ResponseEntity<FacultyDto> getFacultyInfo(@PathVariable Long id) {
+        FacultyDto facultyDto = facultyService.findFacultyById(id);
+        if (facultyDto==null){
             return ResponseEntity.notFound().build();
         }
-        else return ResponseEntity.ok(faculty);
+        else return ResponseEntity.ok(facultyDto);
     }
 
     @GetMapping("{id}/students")
@@ -58,21 +51,21 @@ public class FacultyController {
     }
 
     @PutMapping
-    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
-        Faculty foundFaculty = facultyService.updateFaculty(faculty);
-        if (foundFaculty == null) {
+    public ResponseEntity<FacultyDto> editFaculty(@RequestBody Faculty faculty) {
+        FacultyDto facultyDto = facultyService.updateFaculty(faculty);
+        if (facultyDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        else return ResponseEntity.ok(foundFaculty);
+        else return ResponseEntity.ok(facultyDto);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
-        Faculty foundFaculty = facultyService.deleteFaculty(id);
-        if (foundFaculty == null) {
+    public ResponseEntity<FacultyDto> deleteFaculty(@PathVariable Long id) {
+        FacultyDto facultyDto = facultyService.deleteFaculty(id);
+        if (facultyDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        else return ResponseEntity.ok(foundFaculty);
+        else return ResponseEntity.ok(facultyDto);
     }
 /*
     @ExceptionHandler(Exception.class)

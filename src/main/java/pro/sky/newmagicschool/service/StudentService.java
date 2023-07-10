@@ -1,38 +1,45 @@
 package pro.sky.newmagicschool.service;
 
 import org.springframework.stereotype.Service;
+import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
 import pro.sky.newmagicschool.entity.Faculty;
 import pro.sky.newmagicschool.entity.Student;
 import pro.sky.newmagicschool.exception.FacultyNotFoundException;
 import pro.sky.newmagicschool.exception.IncorrectStudentAgeException;
 import pro.sky.newmagicschool.exception.StudentNotFoundException;
+import pro.sky.newmagicschool.mapper.FacultyMapper;
 import pro.sky.newmagicschool.mapper.StudentMapper;
 import pro.sky.newmagicschool.repository.FacultyRepository;
 import pro.sky.newmagicschool.repository.StudentRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
 
-    private final StudentMapper studentMapper;
-
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
-    public StudentService(StudentMapper studentMapper, StudentRepository studentRepository, FacultyRepository facultyRepository) {
-        this.studentMapper = studentMapper;
+    private final StudentMapper studentMapper;
+    private final FacultyMapper facultyMapper;
+
+    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository,
+                          StudentMapper studentMapper, FacultyMapper facultyMapper) {
         this.studentRepository = studentRepository;
         this.facultyRepository = facultyRepository;
+        this.studentMapper = studentMapper;
+        this.facultyMapper = facultyMapper;
     }
 
     public Student createStudent(Student student) {
         return studentRepository.save(student);
     }
 
-    public Student findStudentById(Long studentId) {
-        return studentRepository.findById(studentId)
+    public StudentDto findStudentById(Long studentId) {
+        Student foundStudent = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
+        return studentMapper.toDto(foundStudent);
     }
 
     public StudentDto updateStudent(StudentDto studentDto) {
@@ -58,30 +65,39 @@ public class StudentService {
         return studentMapper.toDto(studentRepository.save(foundStudent));
     }
 
-    public Student deleteStudent(Long studentId) {
+    public StudentDto deleteStudent(Long studentId) {
         Student foundStudent = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
         studentRepository.delete(foundStudent);
-        return foundStudent;
+        return studentMapper.toDto(foundStudent);
     }
 
-    public List<Student> getStudentsByAge(int age) {
+    public List<StudentDto> getStudentsByAge(int age) {
         if (age <= 0) {
             throw new IncorrectStudentAgeException(age);
-        } else return studentRepository.findByAge(age);
+        } else return studentRepository.findByAge(age)
+                .stream()
+                .map(studentMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Student> getStudentsByAgeBetween(int ageFrom, int ageTo) {
+    public List<StudentDto> getStudentsByAgeBetween(int ageFrom, int ageTo) {
         if (ageFrom <= 0) {
             throw new IncorrectStudentAgeException(ageFrom);
         } else if (ageTo <= 0){
             throw new IncorrectStudentAgeException(ageTo);
-        } else return studentRepository.findAllByAgeBetween(ageFrom, ageTo);
+        } else if (ageFrom > ageTo){
+            throw new IncorrectStudentAgeException(ageFrom, ageTo);
+        } else return studentRepository.findAllByAgeBetween(ageFrom, ageTo)
+                .stream()
+                .map(studentMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Faculty findFaculty(Long id) {
+    public FacultyDto findFaculty(Long id) {
         return studentRepository.findById(id)
                 .map(Student::getFaculty)
+                .map(facultyMapper::toDto)
                 .orElseThrow(() -> new FacultyNotFoundException(id));
     }
 

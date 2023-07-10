@@ -1,0 +1,240 @@
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Гарри Поттер",
+  "age": 13
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Гермиона Грейнджер",
+  "age": 13
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Рон Уизли",
+  "age": 12
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Драко Малфой",
+  "age": 13
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Грэхэм Монтегю",
+  "age": 14
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Грегори Гойл",
+  "age": 12
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Захария Смит",
+  "age": 14
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Седрик Диггори",
+  "age": 16
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Чжоу Чанг",
+  "age": 15
+}
+###
+GET http://localhost:8080/student/filter?from=13&to=15
+###
+GET http://localhost:8080/student/filter?from=15&to=13
+###
+GET http://localhost:8080/student/filter?from=1&to=12
+###
+GET http://localhost:8080/student/1
+###
+GET http://localhost:8080/student/4
+###
+GET http://localhost:8080/student/11
+###
+GET http://localhost:8080/student/age/жёлтый
+###
+GET http://localhost:8080/student/age/13
+###
+GET http://localhost:8080/student/-1
+###
+GET http://localhost:8080/student/5
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 0,
+  "name": "Когтевран",
+  "age": 16
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": "красный",
+  "name": "Когтевран",
+  "age": 16
+}
+###
+POST http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Невилл",
+  "age": 12
+}
+###
+GET http://localhost:8080/student/age/12
+###
+GET http://localhost:8080/student/5
+###
+DELETE http://localhost:8080/student/7
+###
+DELETE http://localhost:8080/student/3
+###
+DELETE http://localhost:8080/student/8
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 3,
+  "name": "Рон Уизли",
+  "age": 12,
+  "facultyId": 6
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 7,
+  "name": "Грэхэм Монтегю",
+  "age": 14,
+  "facultyId": 3
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Гарри Поттер",
+  "age": 13,
+  "facultyId": 6
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 8,
+  "name": "Седрик Диггори",
+  "age": 16,
+  "facultyId": 4
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 4,
+  "name": "Драко Малфой",
+  "age": 13,
+  "facultyId": 3
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "Гермиона Грейнджер",
+  "age": 13,
+  "facultyId": 7
+
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 6,
+  "name": "Грегори Гойл",
+  "age": 12,
+  "facultyId": 3
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 9,
+  "name": "Чжоу Чанг",
+  "age": 15,
+  "facultyId": 4
+}
+###
+PUT http://localhost:8080/student
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 5,
+  "name": "Невилл",
+  "age": 12,
+  "facultyId": 4
+}
+###
