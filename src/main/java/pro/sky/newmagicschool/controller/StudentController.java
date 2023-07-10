@@ -5,8 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
-import pro.sky.newmagicschool.entity.Faculty;
 import pro.sky.newmagicschool.entity.Student;
 import pro.sky.newmagicschool.service.AvatarService;
 import pro.sky.newmagicschool.service.StudentService;
@@ -26,8 +26,8 @@ public class StudentController {
     }
 
     @GetMapping("/age/{age}")
-    public ResponseEntity<List<Student>> getStudentsByAge(@PathVariable int age) {
-        List<Student> students = studentService.getStudentsByAge(age);
+    public ResponseEntity<List<StudentDto>> getStudentsByAge(@PathVariable int age) {
+        List<StudentDto> students = studentService.getStudentsByAge(age);
         if (students == null) {
             return ResponseEntity.notFound().build();
         }
@@ -35,22 +35,26 @@ public class StudentController {
     }
 
     @GetMapping("/filter")
-    public List<Student> findByAgeBetween(@RequestParam int ageFrom, @RequestParam int ageTo) {
-        return studentService.getStudentsByAgeBetween(ageFrom, ageTo);
+    public List<StudentDto> findByAgeBetween(@RequestParam int from, @RequestParam int to) {
+        return studentService.getStudentsByAgeBetween(from, to);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Student> getStudentInfo(@PathVariable Long id) {
-        Student student = studentService.findStudentById(id);
-        if (student==null){
+    public ResponseEntity<StudentDto> getStudentInfo(@PathVariable Long id) {
+        StudentDto studentDto = studentService.findStudentById(id);
+        if (studentDto==null){
             return ResponseEntity.notFound().build();
         }
-        else return ResponseEntity.ok(student);
+        else return ResponseEntity.ok(studentDto);
     }
 
     @GetMapping("{id}/faculty")
-    public Faculty findFaculty(@PathVariable("id") Long id) {
-        return studentService.findFaculty(id);
+    public ResponseEntity<FacultyDto> findFaculty(@PathVariable("id") Long id) {
+        FacultyDto facultyDto = studentService.findFaculty(id);
+        if (facultyDto==null){
+            return ResponseEntity.notFound().build();
+        }
+        else return ResponseEntity.ok(facultyDto);
     }
 
 
@@ -79,12 +83,12 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
-        Student foundStudent = studentService.deleteStudent(id);
-        if (foundStudent == null) {
+    public ResponseEntity<StudentDto> deleteStudent(@PathVariable Long id) {
+        StudentDto studentDto = studentService.deleteStudent(id);
+        if (studentDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        else return ResponseEntity.ok(foundStudent);
+        else return ResponseEntity.ok(studentDto);
     }
 
     /*

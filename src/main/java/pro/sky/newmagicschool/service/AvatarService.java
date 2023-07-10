@@ -3,8 +3,10 @@ package pro.sky.newmagicschool.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pro.sky.newmagicschool.dto.StudentDto;
 import pro.sky.newmagicschool.entity.Avatar;
 import pro.sky.newmagicschool.entity.Student;
+import pro.sky.newmagicschool.mapper.StudentMapper;
 import pro.sky.newmagicschool.repository.AvatarRepository;
 
 import javax.imageio.ImageIO;
@@ -26,15 +28,18 @@ public class AvatarService {
 
     private final StudentService studentService;
     private final AvatarRepository avatarRepository;
+    private final StudentMapper studentMapper;
 
-    public AvatarService(StudentService studentService, AvatarRepository avatarRepository) {
+    public AvatarService(StudentService studentService, AvatarRepository avatarRepository, StudentMapper studentMapper) {
         this.studentService = studentService;
         this.avatarRepository = avatarRepository;
+        this.studentMapper = studentMapper;
     }
 
 
     public void uploadAvatar(long studentId, MultipartFile avatarFile) throws IOException {
-        Student student = studentService.findStudentById(studentId);
+        StudentDto studentDto = studentService.findStudentById(studentId);
+        Student student = studentMapper.toEntity(studentDto);
 
         Path avatarPath = Path.of(avatarDir, studentId + "." + getExtension(avatarFile.getOriginalFilename()));
         Files.createDirectories(avatarPath.getParent());
@@ -43,7 +48,7 @@ public class AvatarService {
         try (InputStream is = avatarFile.getInputStream();
              OutputStream os = Files.newOutputStream(avatarPath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
-             BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
+             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
         ) {
             bis.transferTo(bos);
         }

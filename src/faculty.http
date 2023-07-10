@@ -1,0 +1,117 @@
+POST http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Гриффиндор",
+  "color": "красный"
+}
+###
+POST http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Пуффендуй",
+  "color": "жёлтый"
+}
+###
+POST http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Слизерин",
+  "color": "зелёный"
+}
+###
+POST http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "name": "Когтевран",
+  "color": "синий"
+}
+###
+GET http://localhost:8080/faculty/filter?colorOrName=Когте
+###
+GET http://localhost:8080/faculty/filter?colorOrName=ё
+###
+GET http://localhost:8080/faculty/filter?colorOrName=белый
+###
+GET http://localhost:8080/faculty/filter?colorOrName=красный
+###
+GET http://localhost:8080/faculty/6/students
+###
+GET http://localhost:8080/faculty/2
+###
+GET http://localhost:8080/faculty/7/students
+###
+GET http://localhost:8080/faculty/4/students
+###
+GET http://localhost:8080/faculty/3/students
+###
+GET http://localhost:8080/faculty/4
+###
+GET http://localhost:8080/faculty/6
+###
+GET http://localhost:8080/faculty/color/жёлтый
+###
+GET http://localhost:8080/faculty/color/ж
+###
+GET http://localhost:8080/faculty/-1
+###
+GET http://localhost:8080/faculty/1
+###
+GET http://localhost:8080/faculty/
+###
+PUT http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 0,
+  "name": "Когтевран",
+  "color": "синий"
+}
+###
+PUT http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "id": "красный",
+  "name": "Когтевран",
+  "color": "синий"
+}
+###
+PUT http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "Когтевран",
+  "color": "красный"
+}
+###
+PUT http://localhost:8080/faculty
+accept: */*
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Гриффиндорец",
+  "color": "стрёжный"
+}
+###
+GET http://localhost:8080/faculty?color=красный
+###
+DELETE http://localhost:8080/faculty/5
+###
+DELETE http://localhost:8080/faculty/2
+###
+
+
+http://localhost:8080/swagger-ui.html
