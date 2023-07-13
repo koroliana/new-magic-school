@@ -38,10 +38,13 @@ public class StudentController {
          */
     }
 
+    /*
     @GetMapping("/age")
     public Double getAverageStudentAge() {
         return studentService.getAverageStudentAge();
     }
+
+     */
 
     @GetMapping("/filter")
     public List<StudentDto> findByAgeBetween(@RequestParam int from, @RequestParam int to) {
@@ -105,6 +108,8 @@ public class StudentController {
     public String ExceptionHandler(Exception e) {
         return e.getMessage();
     }
+
+     */
 
 
 
