@@ -22,6 +22,7 @@ import pro.sky.newmagicschool.repository.FacultyRepository;
 import pro.sky.newmagicschool.repository.StudentRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -241,32 +242,36 @@ public class StudentControllerTest {
         studentDtoList.add(studentDto2);
 
 
-        ResponseEntity<StudentDtoList> getStudentsByAgeResponse = testRestTemplate.exchange(
-                "http://localhost:" + port + "/age/" + age1,
+        ResponseEntity<String> getStudentsByAgeResponse = testRestTemplate.exchange(
+                "http://localhost:" + port + "/student/age/" + age1,
                 HttpMethod.GET,
-              //  new HttpEntity<>(""),
                 null,
-                StudentDtoList.class
+                String.class
                 );
 
         assertThat(getStudentsByAgeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        /*
+/*
         Gson g = new Gson();
         StudentDtoList receivedStudentDtoList = g.fromJson(getStudentsByAgeResponse.getBody(), StudentDtoList.class);
 
-         */
+ */
 
-        StudentDtoList receivedStudentDtoList = getStudentsByAgeResponse.getBody();
+        Gson gson = new Gson();
+        StudentDto[] studentDtoArray = gson.fromJson(getStudentsByAgeResponse.getBody(), StudentDto[].class);
+        List<StudentDto> receivedStudentDtoList = Arrays.asList(studentDtoArray);
 
 
-        assertThat(receivedStudentDtoList.matchesCount(2));
+
+        //StudentDtoList receivedStudentDtoList = getStudentsByAgeResponse.getBody();
+
+
+      //  assertThat(receivedStudentDtoList.matchesCount(2));
 
          assertThat(receivedStudentDtoList).isNotNull();
 
 
-        for (int i = 0; i < receivedStudentDtoList.getCount(); i++) {
-            StudentDto receivedStudentDto = receivedStudentDtoList.getStudentDto(i);
+        for (int i = 0; i < receivedStudentDtoList.size(); i++) {
+            StudentDto receivedStudentDto = receivedStudentDtoList.get(i);
             StudentDto initialStudentDto = studentDtoList.get(i);
             assertThat(receivedStudentDto.getId()).isEqualTo(initialStudentDto.getId());
             assertThat(receivedStudentDto.getAge()).isEqualTo(initialStudentDto.getAge());
