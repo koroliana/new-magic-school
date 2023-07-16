@@ -1,20 +1,17 @@
 package pro.sky.newmagicschool.controller;
 
-import com.google.gson.Gson;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import pro.sky.newmagicschool.JsonUtil;
-import pro.sky.newmagicschool.StudentDtoList;
 import pro.sky.newmagicschool.dto.StudentDto;
 import pro.sky.newmagicschool.entity.Faculty;
 import pro.sky.newmagicschool.entity.Student;
@@ -26,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
@@ -61,14 +57,14 @@ public class StudentControllerTest {
         student1.setAge(age1);
 
     }
-/*
+
 
     @AfterEach
     public void clean() {
         studentRepository.deleteAll();
     }
 
- */
+
 
     @Test
     void contextLoads() throws Exception {
@@ -193,34 +189,11 @@ public class StudentControllerTest {
 
     }
 
- /*
-        @GetMapping("/age/{age}")
-    public ResponseEntity<List<StudentDto>> getStudentsByAge(@PathVariable int age) {
-        List<StudentDto> students = studentService.getStudentsByAge(age);
-        if (students == null) {
-            return ResponseEntity.notFound().build();
-        }
-        else return ResponseEntity.ok(students);
-    }
-
-  */
     @Test
     public void getStudentsByAgeTest() {
-        /*
-        Faculty faculty = new Faculty();
-        faculty.setName("Test");
-        faculty.setColor("Test");
-
-        Faculty createdFaculty = facultyRepository.save(faculty);
-
-        student1.setFaculty(createdFaculty);
-
-         */
-
         Student student2 = new Student();
         student2.setName(name2);
         student2.setAge(age1);
-       // student2.setFaculty(createdFaculty);
 
         Student createdStudent1 = studentRepository.save(student1);
         Student createdStudent2 = studentRepository.save(student2);
@@ -229,45 +202,30 @@ public class StudentControllerTest {
         studentDto1.setId(createdStudent1.getId());
         studentDto1.setName(createdStudent1.getName());
         studentDto1.setAge(createdStudent1.getAge());
-     //   studentDto1.setFacultyId(createdStudent1.getFaculty().getId());
 
         StudentDto studentDto2 = new StudentDto();
         studentDto2.setId(createdStudent2.getId());
         studentDto2.setName(createdStudent2.getName());
         studentDto2.setAge(createdStudent2.getAge());
-     //   studentDto2.setFacultyId(createdStudent2.getFaculty().getId());
 
         List<StudentDto> studentDtoList = new ArrayList<>();
         studentDtoList.add(studentDto1);
         studentDtoList.add(studentDto2);
 
 
-        ResponseEntity<String> getStudentsByAgeResponse = testRestTemplate.exchange(
+        ResponseEntity<StudentDto[]> getStudentsByAgeResponse = testRestTemplate.exchange(
                 "http://localhost:" + port + "/student/age/" + age1,
                 HttpMethod.GET,
                 null,
-                String.class
+                StudentDto[].class
                 );
 
         assertThat(getStudentsByAgeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-/*
-        Gson g = new Gson();
-        StudentDtoList receivedStudentDtoList = g.fromJson(getStudentsByAgeResponse.getBody(), StudentDtoList.class);
 
- */
-
-        Gson gson = new Gson();
-        StudentDto[] studentDtoArray = gson.fromJson(getStudentsByAgeResponse.getBody(), StudentDto[].class);
+        StudentDto[] studentDtoArray = getStudentsByAgeResponse.getBody();
         List<StudentDto> receivedStudentDtoList = Arrays.asList(studentDtoArray);
 
-
-
-        //StudentDtoList receivedStudentDtoList = getStudentsByAgeResponse.getBody();
-
-
-      //  assertThat(receivedStudentDtoList.matchesCount(2));
-
-         assertThat(receivedStudentDtoList).isNotNull();
+        assertThat(receivedStudentDtoList).isNotNull();
 
 
         for (int i = 0; i < receivedStudentDtoList.size(); i++) {
