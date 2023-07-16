@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
 import pro.sky.newmagicschool.entity.Faculty;
 import pro.sky.newmagicschool.entity.Student;
@@ -62,6 +63,7 @@ public class StudentControllerTest {
     @AfterEach
     public void clean() {
         studentRepository.deleteAll();
+        facultyRepository.deleteAll();
     }
 
 
@@ -92,7 +94,7 @@ public class StudentControllerTest {
     @Test
     public void editStudentTestNotFound() {
 
-        Student createdStudent = studentRepository.save(student1);
+        studentRepository.save(student1);
 
         StudentDto studentDto = new StudentDto();
         studentDto.setId(incorrectId);
@@ -190,6 +192,48 @@ public class StudentControllerTest {
     }
 
     @Test
+    public void getStudentInfoTestNotFound() {
+        ResponseEntity<StudentDto> getStudentInfoResponse = testRestTemplate.exchange(
+                "http://localhost:" + port + "/student/" + incorrectId,
+                HttpMethod.GET,
+                null,
+                StudentDto.class
+        );
+
+        assertThat(getStudentInfoResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void getStudentInfoTest() {
+        Student createdStudent = studentRepository.save(student1);
+        Long correctID = createdStudent.getId();
+
+        StudentDto studentDto = new StudentDto();
+        studentDto.setId(correctID);
+        studentDto.setName(student1.getName());
+        studentDto.setAge(student1.getAge());
+
+
+        ResponseEntity<StudentDto> getStudentInfoResponse = testRestTemplate.exchange(
+                "http://localhost:" + port + "/student/" + correctID,
+                HttpMethod.GET,
+                null,
+                StudentDto.class
+        );
+
+        assertThat(getStudentInfoResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        StudentDto foundStudentDto = getStudentInfoResponse.getBody();
+
+        assertThat(foundStudentDto).isNotNull();
+        assertThat(foundStudentDto.getId()).isEqualTo(studentDto.getId());
+        assertThat(foundStudentDto.getAge()).isEqualTo(studentDto.getAge());
+        assertThat(foundStudentDto.getName()).isEqualTo(studentDto.getName());
+
+    }
+
+
+    @Test
     public void getStudentsByAgeTest() {
         Student student2 = new Student();
         student2.setName(name2);
@@ -239,29 +283,81 @@ public class StudentControllerTest {
 
  }
 
+    @Test
+    public void findByAgeBetweenTest() {
+     Student student2 = new Student();
+        student2.setName(name2);
+        student2.setAge(age2);
 
- /*
-    @GetMapping("/filter")
-    public List<StudentDto> findByAgeBetween(@RequestParam int from, @RequestParam int to) {
-        return studentService.getStudentsByAgeBetween(from, to);
-    }
+        Student createdStudent1 = studentRepository.save(student1);
+        studentRepository.save(student2);
 
-    @GetMapping("{id}")
-    public ResponseEntity<StudentDto> getStudentInfo(@PathVariable Long id) {
-        StudentDto studentDto = studentService.findStudentById(id);
-        if (studentDto==null){
-            return ResponseEntity.notFound().build();
+        StudentDto studentDto1 = new StudentDto();
+        studentDto1.setId(createdStudent1.getId());
+        studentDto1.setName(createdStudent1.getName());
+        studentDto1.setAge(createdStudent1.getAge());
+
+        List<StudentDto> studentDtoList = new ArrayList<>();
+        studentDtoList.add(studentDto1);
+
+        ResponseEntity<StudentDto[]> findStudentsByAgeBetweenResponse = testRestTemplate.exchange(
+                "http://localhost:" + port + "/student/filter?from=16&to=" + age1,
+                HttpMethod.GET,
+                null,
+                StudentDto[].class
+        );
+
+        assertThat(findStudentsByAgeBetweenResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        StudentDto[] studentDtoArray = findStudentsByAgeBetweenResponse.getBody();
+        List<StudentDto> receivedStudentDtoList = Arrays.asList(studentDtoArray);
+
+        assertThat(receivedStudentDtoList).isNotNull();
+
+
+        for (int i = 0; i < receivedStudentDtoList.size(); i++) {
+            StudentDto receivedStudentDto = receivedStudentDtoList.get(i);
+            StudentDto initialStudentDto = studentDtoList.get(i);
+            assertThat(receivedStudentDto.getId()).isEqualTo(initialStudentDto.getId());
+            assertThat(receivedStudentDto.getAge()).isEqualTo(initialStudentDto.getAge());
+            assertThat(receivedStudentDto.getName()).isEqualTo(initialStudentDto.getName());
         }
-        else return ResponseEntity.ok(studentDto);
+    }
+    @Test
+    public void findFacultyTest() {
+        Faculty faculty = new Faculty();
+        faculty.setName("Test");
+        faculty.setColor("Test");
+
+        Faculty createdFaculty = facultyRepository.save(faculty);
+        student1.setFaculty(createdFaculty);
+
+        Student createdStudent = studentRepository.save(student1);
+        Long studentId = createdStudent.getId();
+
+        FacultyDto facultyDto = new FacultyDto();
+        facultyDto.setId(createdFaculty.getId());
+        facultyDto.setName(createdFaculty.getName());
+        facultyDto.setColor(createdFaculty.getColor());
+
+        ResponseEntity<FacultyDto> findFacultyResponse = testRestTemplate.exchange(
+                "http://localhost:" + port + "/student/" + studentId + "/faculty",
+                HttpMethod.GET,
+                null,
+                FacultyDto.class
+        );
+
+        assertThat(findFacultyResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        FacultyDto foundFacultyDto = findFacultyResponse.getBody();
+
+        assertThat(foundFacultyDto).isNotNull();
+        assertThat(foundFacultyDto.getId()).isEqualTo(facultyDto.getId());
+        assertThat(foundFacultyDto.getColor()).isEqualTo(facultyDto.getColor());
+        assertThat(foundFacultyDto.getName()).isEqualTo(facultyDto.getName());
+
     }
 
-    @GetMapping("{id}/faculty")
-    public ResponseEntity<FacultyDto> findFaculty(@PathVariable("id") Long id) {
-        FacultyDto facultyDto = studentService.findFaculty(id);
-        if (facultyDto==null){
-            return ResponseEntity.notFound().build();
-        }
-        else return ResponseEntity.ok(facultyDto);
-    }
-     */
+
+
 }

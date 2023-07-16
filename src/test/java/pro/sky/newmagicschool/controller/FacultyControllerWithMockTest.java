@@ -16,7 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.newmagicschool.dto.FacultyDto;
+import pro.sky.newmagicschool.dto.StudentDto;
 import pro.sky.newmagicschool.entity.Faculty;
+import pro.sky.newmagicschool.entity.Student;
 import pro.sky.newmagicschool.mapper.FacultyMapper;
 import pro.sky.newmagicschool.mapper.StudentMapper;
 import pro.sky.newmagicschool.repository.AvatarRepository;
@@ -31,7 +33,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import java.util.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -82,7 +83,7 @@ public class FacultyControllerWithMockTest {
     String name = "Wolvenwood";
     String color = "silver";
     Faculty faculty = new Faculty();
-   // FacultyDto facultyDto = new FacultyDto();
+    //FacultyDto facultyDto = new FacultyDto();
 
     @BeforeEach
     public void beforeEach() {
@@ -90,11 +91,12 @@ public class FacultyControllerWithMockTest {
         faculty.setName(name);
         faculty.setColor(color);
 /*
-        facultyDto.setId(id);
-        facultyDto.setName(name);
-        facultyDto.setColor(color);
+        facultyDto.setId(faculty.getId());
+        facultyDto.setName(faculty.getName());
+        facultyDto.setColor(faculty.getColor());
 
  */
+
     }
 
 
@@ -241,8 +243,6 @@ public class FacultyControllerWithMockTest {
 
     }
 
-
-
     @Test
     public void findAllTest() throws Exception {
         List<Faculty> faculties = Stream.iterate(2, id -> id + 1)
@@ -250,76 +250,185 @@ public class FacultyControllerWithMockTest {
                 .limit(20)
                 .collect(Collectors.toList());
 
-       /* faculties.add(1, faculty);
+        when(facultyRepository.findAll()).thenReturn(faculties);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/faculty")
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(result ->
+                        {
+                            try {
+                                List<FacultyDto> receivedFaculties = objectMapper
+                                        .readValue(
+                                                result.getResponse().getContentAsString(),
+                                                new TypeReference<List<FacultyDto>>() {
+                                                }
+                                        );
+                                assertThat(receivedFaculties)
+                                        .isNotNull()
+                                        .isNotEmpty();
+                                Stream.iterate(0, index -> index + 1)
+                                        .limit(receivedFaculties.size())
+                                        .forEach(index ->
+                                        {
+                                            FacultyDto receivedFacultyDto = receivedFaculties.get(index);
+                                            Faculty expected = faculties.get(index);
+                                            assertThat(receivedFacultyDto.getId()).isEqualTo(expected.getId());
+                                            assertThat(receivedFacultyDto.getColor()).isEqualTo(expected.getColor());
+                                            assertThat(receivedFacultyDto.getName()).isEqualTo(expected.getName());
+                                        });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                );
+        verify(facultyRepository, times(1)).findAll();
+
+        faculties.add(1, faculty);
 
         List<Faculty> facultiesOfSearchedColor = faculties.stream()
                 .filter(f -> f.getColor().equals(color))
                 .collect(Collectors.toList());
 
-        */
-
-        when(facultyRepository.findAll()).thenReturn(faculties);
-        // when(facultyRepository.findAllByColor(eq(color))).thenReturn(facultiesOfSearchedColor);
+        when(facultyRepository.findAllByColor(eq(color))).thenReturn(facultiesOfSearchedColor);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.get("/faculties")
+                        MockMvcRequestBuilders.get("/faculty?color=" + color)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect( result ->
-                {
-                    try {
-                        List<FacultyDto> receivedFaculties = objectMapper
-                            .readValue(
-                                result.getResponse().getContentAsString(),
-                                new TypeReference<List<FacultyDto>>() {}
-                            );
-                        assertThat(receivedFaculties)
-                            .isNotNull()
-                            .isNotEmpty();
-                        Stream.iterate(0, index -> index + 1)
-                            .limit(receivedFaculties.size())
-                            .forEach(index ->
-                            {
-                                FacultyDto receivedFacultyDto = receivedFaculties.get(index);
-                                Faculty expected = faculties.get(index);
-                                assertThat(receivedFacultyDto.getId()).isEqualTo(expected.getId());
-                                assertThat(receivedFacultyDto.getColor()).isEqualTo(expected.getColor());
-                                assertThat(receivedFacultyDto.getName()).isEqualTo(expected.getName());
-                            });
+                        {
+                            try {
+                                List<FacultyDto> receivedFaculties = objectMapper
+                                        .readValue(
+                                                result.getResponse().getContentAsString(),
+                                                new TypeReference<List<FacultyDto>>() {}
+                                        );
+                                assertThat(receivedFaculties)
+                                        .isNotNull()
+                                        .isNotEmpty();
+                                Stream.iterate(0, index -> index + 1)
+                                        .limit(receivedFaculties.size())
+                                        .forEach(index ->
+                                        {
+                                            FacultyDto receivedFacultyDto = receivedFaculties.get(index);
+                                            Faculty expected = facultiesOfSearchedColor.get(index);
+                                            assertThat(receivedFacultyDto.getId()).isEqualTo(expected.getId());
+                                            assertThat(receivedFacultyDto.getColor()).isEqualTo(expected.getColor());
+                                            assertThat(receivedFacultyDto.getName()).isEqualTo(expected.getName());
+                                        });
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                        }
-                }
-        );
-        /*
-        verify(facultyRepository, times(1)).findAll(any());
+                );
 
+        verify(facultyRepository, times(1)).findAllByColor(any());
+    }
+
+    @Test
+    public void findByColorOrNameTest() throws Exception {
+        List<Faculty> faculties = Stream.iterate(2, id -> id + 1)
+                .map(this::generate)
+                .limit(20)
+                .collect(Collectors.toList());
+
+        String searchableString = "wood";
+
+        Faculty faculty2 = new Faculty();
+        faculty2.setId(2L);
+        faculty2.setName("Test");
+        faculty2.setColor(searchableString);
+
+        faculties.add(1, faculty);
+        faculties.add(2,faculty2);
+
+        List<Faculty> facultiesOfSearchedColorOrName = faculties.stream()
+                .filter(f -> f.getColor().contains(searchableString)||f.getName().contains(searchableString))
+                .collect(Collectors.toList());
+
+        when(facultyRepository
+                .findAllByColorContainingIgnoreCaseOrNameContainingIgnoreCase(
+                        eq(searchableString),eq(searchableString)))
+                .thenReturn(facultiesOfSearchedColorOrName);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.get("/faculties?color=silver")
+                        MockMvcRequestBuilders.get("/faculty/filter?colorOrName=" + searchableString)
                                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(result -> {
-                    List<Faculty> receivedFaculties = objectMapper.readValue(
-                            result.getResponse().getContentAsString(),
-                            new TypeReference<List<Faculty>>() {
+                .andExpect( result ->
+                        {
+                            try {
+                                List<FacultyDto> receivedFaculties = objectMapper
+                                        .readValue(
+                                                result.getResponse().getContentAsString(),
+                                                new TypeReference<List<FacultyDto>>() {}
+                                        );
+                                assertThat(receivedFaculties)
+                                        .isNotNull()
+                                        .isNotEmpty();
+                                Stream.iterate(0, index -> index + 1)
+                                        .limit(receivedFaculties.size())
+                                        .forEach(index ->
+                                        {
+                                            FacultyDto receivedFacultyDto = receivedFaculties.get(index);
+                                            Faculty expected = facultiesOfSearchedColorOrName.get(index);
+                                            assertThat(receivedFacultyDto.getId()).isEqualTo(expected.getId());
+                                            assertThat(receivedFacultyDto.getColor()).isEqualTo(expected.getColor());
+                                            assertThat(receivedFacultyDto.getName()).isEqualTo(expected.getName());
+                                        });
                             }
-                    );
-                    assertThat(receivedFaculties)
-                            .isNotNull()
-                            .isNotEmpty();
-                    Stream.iterate(0, index -> index + 1)
-                            .limit(receivedFaculties.size())
-                            .forEach(index -> {
-                                Faculty receivedFaculty = receivedFaculties.get(index);
-                                Faculty expected = facultiesOfSearchedColor.get(index);
-                                assertThat(receivedFaculty.getId()).isEqualTo(expected.getId());
-                                assertThat(receivedFaculty.getColor()).isEqualTo(expected.getColor());
-                                assertThat(receivedFaculty.getName()).isEqualTo(expected.getName());
-                            });
-                });
-        verify(facultyRepository, times(1)).findAllByColor(any());
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                );
 
-         */
+        verify(facultyRepository, times(1))
+                .findAllByColorContainingIgnoreCaseOrNameContainingIgnoreCase(
+                        any(),any());
+    }
+
+    @Test
+    public void findStudentsTest() throws Exception {
+        List<Student> students = Stream.iterate(2, id -> id + 1)
+                .map(this::generateStudents)
+                .limit(5)
+                .collect(Collectors.toList());
+
+        when(studentRepository.findAllByFaculty_Id(eq(id))).thenReturn(students);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/faculty/"+ id +"/students")
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect( result ->
+                        {
+                            try {
+                                List<StudentDto> receivedStudents = objectMapper
+                                        .readValue(
+                                                result.getResponse().getContentAsString(),
+                                                new TypeReference<List<StudentDto>>() {}
+                                        );
+                                assertThat(receivedStudents)
+                                        .isNotNull()
+                                        .isNotEmpty();
+                                Stream.iterate(0, index -> index + 1)
+                                        .limit(receivedStudents.size())
+                                        .forEach(index ->
+                                        {
+                                            StudentDto receivedStudentDto = receivedStudents.get(index);
+                                            Student expected = students.get(index);
+                                            assertThat(receivedStudentDto.getId()).isEqualTo(expected.getId());
+                                            assertThat(receivedStudentDto.getAge()).isEqualTo(expected.getAge());
+                                            assertThat(receivedStudentDto.getName()).isEqualTo(expected.getName());
+                                        });
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                );
+
+        verify(studentRepository, times(1)).findAllByFaculty_Id(any());
 
     }
 
@@ -329,5 +438,14 @@ public class FacultyControllerWithMockTest {
         faculty.setName(faker.animal().name());
         faculty.setColor(faker.color().name());
         return faculty;
+    }
+
+    private Student generateStudents(long id) {
+        Student student = new Student();
+        student.setId(id);
+        student.setName(faker.harryPotter().character());
+        student.setAge((int) Math.pow(Math.random(), 2));
+        student.setFaculty(faculty);
+        return student;
     }
 }
