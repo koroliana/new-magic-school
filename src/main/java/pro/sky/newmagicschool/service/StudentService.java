@@ -1,5 +1,7 @@
 package pro.sky.newmagicschool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
@@ -24,6 +26,8 @@ public class StudentService {
     private final StudentMapper studentMapper;
     private final FacultyMapper facultyMapper;
 
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository,
                           StudentMapper studentMapper, FacultyMapper facultyMapper) {
         this.studentRepository = studentRepository;
@@ -33,23 +37,35 @@ public class StudentService {
     }
 
     public Student createStudent(Student student) {
+        logger.info("createStudent method was invoked");
         return studentRepository.save(student);
     }
 
     public StudentDto findStudentById(Long studentId) {
+        logger.info("findStudentById method was invoked");
         Student foundStudent = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
+                .orElseThrow(() -> {
+                    logger.error("There is no student with id = " + studentId);
+                    return new StudentNotFoundException(studentId);
+                });
         return studentMapper.toDto(foundStudent);
     }
 
     public StudentDto updateStudent(StudentDto studentDto) {
+        logger.info("updateStudent method was invoked");
         Student foundStudent = studentRepository.findById(studentDto.getId())
-                .orElseThrow(() -> new StudentNotFoundException(studentDto.getId()));
+                .orElseThrow(() -> {
+                    logger.error("There is no student with id = " + studentDto.getId());
+                    return new StudentNotFoundException(studentDto.getId());
+                });
 
         foundStudent.setName(studentDto.getName());
         foundStudent.setAge(studentDto.getAge());
         Faculty foundFaculty = facultyRepository.findById(studentDto.getFacultyId())
-                .orElseThrow(() -> new FacultyNotFoundException(studentDto.getFacultyId()));
+                .orElseThrow(() -> {
+                    logger.error("There is no faculty with id = " + studentDto.getFacultyId());
+                    return new FacultyNotFoundException(studentDto.getFacultyId());
+                });
         foundStudent.setFaculty(foundFaculty);
 
         /*
@@ -66,14 +82,20 @@ public class StudentService {
     }
 
     public StudentDto deleteStudent(Long studentId) {
+        logger.info("deleteStudent method was invoked");
         Student foundStudent = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
+                .orElseThrow(() -> {
+                    logger.error("There is no student with id = " + studentId);
+                    return new StudentNotFoundException(studentId);
+                });
         studentRepository.delete(foundStudent);
         return studentMapper.toDto(foundStudent);
     }
 
     public List<StudentDto> getStudentsByAge(int age) {
+        logger.info("getStudentsByAge method was invoked");
         if (age <= 0) {
+            logger.error("Student couldn't have age = " + age);
             throw new IncorrectStudentAgeException(age);
         } else return studentRepository.findByAge(age)
                 .stream()
@@ -82,11 +104,15 @@ public class StudentService {
     }
 
     public List<StudentDto> getStudentsByAgeBetween(int ageFrom, int ageTo) {
+        logger.info("getStudentsByAgeBetween method was invoked");
         if (ageFrom <= 0) {
+            logger.error("Student couldn't have age = " + ageFrom);
             throw new IncorrectStudentAgeException(ageFrom);
         } else if (ageTo <= 0){
+            logger.error("Student couldn't have age = " + ageTo);
             throw new IncorrectStudentAgeException(ageTo);
         } else if (ageFrom > ageTo){
+            logger.error("ageFrom couldn't be larger than ageTo");
             throw new IncorrectStudentAgeException(ageFrom, ageTo);
         } else return studentRepository.findAllByAgeBetween(ageFrom, ageTo)
                 .stream()
@@ -95,10 +121,14 @@ public class StudentService {
     }
 
     public FacultyDto findFaculty(Long id) {
+        logger.info("findFaculty method was invoked");
         return studentRepository.findById(id)
                 .map(Student::getFaculty)
                 .map(facultyMapper::toDto)
-                .orElseThrow(() -> new FacultyNotFoundException(id));
+                .orElseThrow(() -> {
+                    logger.error("There is no faculty with id = " + id);
+                    return new FacultyNotFoundException(id);
+                });
     }
 
     /*
