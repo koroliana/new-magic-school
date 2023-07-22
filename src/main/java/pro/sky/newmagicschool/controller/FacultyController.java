@@ -67,6 +67,19 @@ public class FacultyController {
         }
         else return ResponseEntity.ok(facultyDto);
     }
+
+    @GetMapping("/sum")
+    public Integer sum() {
+        return facultyService.sum();
+    }
+
+    @GetMapping("/sum-impr")
+    public Integer sumImpr() {
+        return facultyService.sumImpr();
+    }
+
+
+
 /*
     @ExceptionHandler(Exception.class)
     public String ExceptionHandler(Exception e) {
