@@ -146,7 +146,7 @@ Content-Type: application/json
   "id": 3,
   "name": "Рон Уизли",
   "age": 12,
-  "facultyId": 6
+  "facultyId": 1
 }
 ###
 PUT http://localhost:8080/student
@@ -168,7 +168,7 @@ Content-Type: application/json
   "id": 1,
   "name": "Гарри Поттер",
   "age": 13,
-  "facultyId": 6
+  "facultyId": 1
 }
 ###
 PUT http://localhost:8080/student
@@ -201,7 +201,7 @@ Content-Type: application/json
   "id": 2,
   "name": "Гермиона Грейнджер",
   "age": 13,
-  "facultyId": 7
+  "facultyId": 1
 
 }
 ###
@@ -235,6 +235,6 @@ Content-Type: application/json
   "id": 5,
   "name": "Невилл",
   "age": 12,
-  "facultyId": 4
+  "facultyId": 2
 }
 ###
