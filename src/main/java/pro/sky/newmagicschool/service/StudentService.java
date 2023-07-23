@@ -1,6 +1,8 @@
 package pro.sky.newmagicschool.service;
 
 import org.springframework.data.domain.Pageable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
@@ -24,6 +26,8 @@ public class StudentService {
     private final FacultyRepository facultyRepository;
     private final StudentMapper studentMapper;
     private final FacultyMapper facultyMapper;
+
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository,
                           StudentMapper studentMapper, FacultyMapper facultyMapper) {

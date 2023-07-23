@@ -12,6 +12,9 @@ public class Student {
     private String name;
     private int age;
 
+    @OneToOne
+    private Avatar avatar;
+
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
@@ -65,6 +68,13 @@ public class Student {
         this.faculty = faculty;
     }
 
+    public Avatar getAvatar(){return avatar;}
+    public void setAvatar(Avatar avatar) {this.avatar = avatar;}
+
+    public boolean haveAvatar(){
+        return avatar != null;
+    }
+
     public void deleteFaculty() {
         this.faculty = null;
     }
@@ -84,6 +94,7 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Имя: " + name + ", возраст: " + age;
+        return "id:" + id + " - "
+                +"Имя: " + name + ", возраст: " + age;
     }
 }

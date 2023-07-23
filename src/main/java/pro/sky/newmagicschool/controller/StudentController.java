@@ -26,18 +26,25 @@ public class StudentController {
     }
 
     @GetMapping("/age/{age}")
-    public ResponseEntity<List<StudentDto>> getStudentsByAge(@PathVariable int age) {
-        List<StudentDto> students = studentService.getStudentsByAge(age);
+    public List<StudentDto> getStudentsByAge(@PathVariable int age) {
+        return studentService.getStudentsByAge(age);
+
+        /*
         if (students == null) {
             return ResponseEntity.notFound().build();
         }
         else return ResponseEntity.ok(students);
+
+         */
     }
 
+    /*
     @GetMapping("/age")
     public Double getAverageStudentAge() {
         return studentService.getAverageStudentAge();
     }
+
+     */
 
     @GetMapping("/filter")
     public List<StudentDto> findByAgeBetween(@RequestParam int from, @RequestParam int to) {
@@ -111,6 +118,8 @@ public class StudentController {
     public String ExceptionHandler(Exception e) {
         return e.getMessage();
     }
+
+     
 
 
 
