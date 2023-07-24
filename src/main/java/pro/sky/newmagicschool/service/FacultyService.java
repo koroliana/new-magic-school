@@ -12,7 +12,7 @@ import pro.sky.newmagicschool.mapper.StudentMapper;
 import pro.sky.newmagicschool.repository.FacultyRepository;
 import pro.sky.newmagicschool.repository.StudentRepository;
 
-import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -91,7 +91,7 @@ public class FacultyService {
         long start = System.currentTimeMillis();
         int res = Stream.iterate(1, a -> a +1)
                 .limit(1_000_000)
-                .reduce(0, (a, b) -> a + b );
+                .reduce(0, Integer::sum);
         long finish = System.currentTimeMillis();
         long dif = finish - start;
         System.out.println("simple " + dif);
@@ -104,7 +104,7 @@ public class FacultyService {
         int res = Stream.iterate(1, a -> a +1)
                 .parallel()
                 .limit(1_000_000)
-                .reduce(0, (a, b) -> a + b );
+                .reduce(0, Integer::sum);
         long finish = System.currentTimeMillis();
         long dif = finish - start;
         System.out.println("impr " + dif);
@@ -112,4 +112,10 @@ public class FacultyService {
 
     }
 
+    public String getLongestName() {
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparing(String::length))
+                .get();
+    }
 }

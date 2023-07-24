@@ -68,6 +68,11 @@ public class FacultyController {
         else return ResponseEntity.ok(facultyDto);
     }
 
+    @GetMapping("/longest-name")
+    public String getLongestName() {
+        return facultyService.getLongestName();
+    }
+
     @GetMapping("/sum")
     public Integer sum() {
         return facultyService.sum();

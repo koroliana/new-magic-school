@@ -103,6 +103,17 @@ public class StudentController {
         else return ResponseEntity.ok(studentDto);
     }
 
+    @GetMapping("/names-start-with-a")
+    public List<String> getNamesStartWithA() {
+        return studentService.getNamesStartWithA();
+    }
+
+    @GetMapping("/avg-age")
+    public double getAvgAge() {
+        return studentService.getAvgAge();
+    }
+
+
     /*
     @ExceptionHandler(Exception.class)
     public String ExceptionHandler(Exception e) {
