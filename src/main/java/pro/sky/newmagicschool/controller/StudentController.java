@@ -118,6 +118,11 @@ public class StudentController {
         studentService.taskThread();
     }
 
+    @GetMapping("/thread-sync")
+    public void threadSync() {
+        studentService.taskThreadSync();
+    }
+
     /*
     @ExceptionHandler(Exception.class)
     public String ExceptionHandler(Exception e) {

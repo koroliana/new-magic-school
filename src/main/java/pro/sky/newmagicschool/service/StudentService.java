@@ -147,6 +147,29 @@ public class StudentService {
         }
     }
 
+    public void taskThreadSync() {
+        List<Student> students = studentRepository.findAll();
+        logger.info(students.toString());
+
+        printStudentSync(students.get(0));
+        printStudentSync(students.get(1));
+
+        new Thread(() -> {
+            printStudentSync(students.get(2));
+            printStudentSync(students.get(3));
+        }).start();
+
+        new Thread(() -> {
+            printStudentSync(students.get(4));
+            printStudentSync(students.get(5));
+        }).start();
+    }
+
+    private synchronized void printStudentSync(Student student) {
+        printStudent(student);
+    }
+
+
 
     /*
       public StudentDtoOut uploadAvatar(long id, MultipartFile multipartFile) {
