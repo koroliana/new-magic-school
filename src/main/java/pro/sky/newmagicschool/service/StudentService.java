@@ -14,7 +14,8 @@ import pro.sky.newmagicschool.repository.FacultyRepository;
 import pro.sky.newmagicschool.repository.StudentRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class StudentService {
@@ -78,7 +79,7 @@ public class StudentService {
         } else return studentRepository.findByAge(age)
                 .stream()
                 .map(studentMapper::toDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<StudentDto> getStudentsByAgeBetween(int ageFrom, int ageTo) {
@@ -91,7 +92,7 @@ public class StudentService {
         } else return studentRepository.findAllByAgeBetween(ageFrom, ageTo)
                 .stream()
                 .map(studentMapper::toDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public FacultyDto findFaculty(Long id) {
@@ -100,6 +101,22 @@ public class StudentService {
                 .map(facultyMapper::toDto)
                 .orElseThrow(() -> new FacultyNotFoundException(id));
     }
+
+    public List<String> getNamesStartWithA() {
+        return studentRepository.findAll().stream()
+                .map(student -> student.getName().toUpperCase())
+                .filter(name -> name.startsWith("A"))
+                .sorted()
+                .collect(toList());
+    }
+
+    public double getAvgAge() {
+        return studentRepository.findAll().stream()
+                .mapToDouble(Student::getAge)
+                .average()
+                .getAsDouble();
+    }
+
 
     /*
       public StudentDtoOut uploadAvatar(long id, MultipartFile multipartFile) {
