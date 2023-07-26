@@ -1,5 +1,7 @@
 package pro.sky.newmagicschool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.newmagicschool.dto.FacultyDto;
 import pro.sky.newmagicschool.dto.StudentDto;
@@ -24,6 +26,8 @@ public class StudentService {
     private final FacultyRepository facultyRepository;
     private final StudentMapper studentMapper;
     private final FacultyMapper facultyMapper;
+
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository,
                           StudentMapper studentMapper, FacultyMapper facultyMapper) {
@@ -115,6 +119,32 @@ public class StudentService {
                 .mapToDouble(Student::getAge)
                 .average()
                 .getAsDouble();
+    }
+
+    public void taskThread() {
+        List<Student> students = studentRepository.findAll();
+
+        printStudent(students.get(0));
+        printStudent(students.get(1));
+
+        new Thread(() -> {
+            printStudent(students.get(2));
+            printStudent(students.get(3));
+        }).start();
+
+        new Thread(() -> {
+            printStudent(students.get(4));
+            printStudent(students.get(5));
+        }).start();
+    }
+
+    private void printStudent(Student student) {
+        try {
+            Thread.sleep(1000);
+            logger.info(student.toString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
