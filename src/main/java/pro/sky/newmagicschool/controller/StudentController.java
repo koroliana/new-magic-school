@@ -113,6 +113,15 @@ public class StudentController {
         return studentService.getAvgAge();
     }
 
+    @GetMapping("/thread")
+    public void thread() {
+        studentService.taskThread();
+    }
+
+    @GetMapping("/thread-sync")
+    public void threadSync() {
+        studentService.taskThreadSync();
+    }
 
     /*
     @ExceptionHandler(Exception.class)

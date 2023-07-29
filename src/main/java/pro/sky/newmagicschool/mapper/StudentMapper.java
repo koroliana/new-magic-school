@@ -31,6 +31,7 @@ public class StudentMapper {
 
     public Student toEntity(StudentDto studentDto){
         Student student = new Student();
+        student.setId(studentDto.getId());
         student.setName(studentDto.getName());
         student.setAge(studentDto.getAge());
         Optional.ofNullable(studentDto.getFacultyId())
