@@ -1,5 +1,7 @@
 package pro.sky.newmagicschool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +32,8 @@ public class AvatarService {
     private final AvatarRepository avatarRepository;
     private final StudentMapper studentMapper;
 
+    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+
     public AvatarService(StudentService studentService, AvatarRepository avatarRepository, StudentMapper studentMapper) {
         this.studentService = studentService;
         this.avatarRepository = avatarRepository;
@@ -38,6 +42,7 @@ public class AvatarService {
 
 
     public void uploadAvatar(long studentId, MultipartFile avatarFile) throws IOException {
+        logger.info("uploadAvatar method was invoked");
         StudentDto studentDto = studentService.findStudentById(studentId);
         Student student = studentMapper.toEntity(studentDto);
 
@@ -63,10 +68,12 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(long studentId) {
+        logger.info("findAvatar method was invoked");
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 
     private byte[] generateImagePreview(Path avatarPath) throws IOException {
+        logger.info("generateImagePreview method was invoked");
         try (InputStream is = Files.newInputStream(avatarPath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -85,6 +92,7 @@ public class AvatarService {
     }
 
     private String getExtension(String avatarName) {
+        logger.info("getExtension method was invoked");
         return avatarName.substring(avatarName.lastIndexOf(".")+1);
     }
 
