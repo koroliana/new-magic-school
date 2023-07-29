@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pro.sky.newmagicschool.dto.StudentDto;
 import pro.sky.newmagicschool.entity.Avatar;
 import pro.sky.newmagicschool.entity.Student;
 import pro.sky.newmagicschool.exception.StudentNotFoundException;
@@ -70,9 +69,14 @@ public class AvatarService {
         avatar.setData(generateImagePreview(avatarPath));
 
         avatarRepository.save(avatar);
+        student.setAvatar(avatar);
+        studentRepository.save(student);
 
+        /*
         StudentDto studentDto = studentMapper.toDto(student);
         studentDto.setAvatarUrl(avatar.getFilePath());
+
+         */
 
     }
 

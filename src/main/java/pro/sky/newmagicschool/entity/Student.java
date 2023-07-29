@@ -13,6 +13,7 @@ public class Student {
     private int age;
 
     @OneToOne
+    @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 
     @ManyToOne
