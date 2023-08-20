@@ -18,6 +18,7 @@ import pro.sky.newmagicschool.repository.FacultyRepository;
 import pro.sky.newmagicschool.repository.StudentRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -181,7 +182,7 @@ public class StudentService {
                 .stream()
                 .map(studentMapper::toDto)
                 .collect(Collectors.toList());
-
+    }
 
     private void printStudent(Student student) {
         try {

@@ -11,6 +11,7 @@ import pro.sky.newmagicschool.entity.Avatar;
 import pro.sky.newmagicschool.entity.Student;
 import pro.sky.newmagicschool.exception.StudentNotFoundException;
 import pro.sky.newmagicschool.mapper.AvatarMapper;
+import pro.sky.newmagicschool.mapper.StudentMapper;
 import pro.sky.newmagicschool.repository.AvatarRepository;
 import pro.sky.newmagicschool.repository.StudentRepository;
 
@@ -38,9 +39,11 @@ public class AvatarService {
     private final StudentRepository studentRepository;
     private final AvatarMapper avatarMapper;
 
+
+
     Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
-    public AvatarService(AvatarRepository avatarRepository, StudentMapper studentMapper, AvatarMapper avatarMapper) 
+    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository, AvatarMapper avatarMapper) {
         this.avatarRepository = avatarRepository;
         this.studentRepository = studentRepository;
         this.avatarMapper = avatarMapper;
