@@ -3,13 +3,16 @@ package pro.sky.newmagicschool.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pro.sky.newmagicschool.dto.StudentDto;
+import pro.sky.newmagicschool.dto.AvatarDto;
 import pro.sky.newmagicschool.entity.Avatar;
 import pro.sky.newmagicschool.entity.Student;
-import pro.sky.newmagicschool.mapper.StudentMapper;
+import pro.sky.newmagicschool.exception.StudentNotFoundException;
+import pro.sky.newmagicschool.mapper.AvatarMapper;
 import pro.sky.newmagicschool.repository.AvatarRepository;
+import pro.sky.newmagicschool.repository.StudentRepository;
 
 import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
@@ -18,6 +21,9 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -28,25 +34,26 @@ public class AvatarService {
     @Value("${student.avatar.dir.path}")
     private String avatarDir;
 
-    private final StudentService studentService;
     private final AvatarRepository avatarRepository;
-    private final StudentMapper studentMapper;
+    private final StudentRepository studentRepository;
+    private final AvatarMapper avatarMapper;
 
     Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
-    public AvatarService(StudentService studentService, AvatarRepository avatarRepository, StudentMapper studentMapper) {
-        this.studentService = studentService;
+    public AvatarService(AvatarRepository avatarRepository, StudentMapper studentMapper, AvatarMapper avatarMapper) 
         this.avatarRepository = avatarRepository;
-        this.studentMapper = studentMapper;
+        this.studentRepository = studentRepository;
+        this.avatarMapper = avatarMapper;
     }
 
 
     public void uploadAvatar(long studentId, MultipartFile avatarFile) throws IOException {
         logger.info("uploadAvatar method was invoked");
-        StudentDto studentDto = studentService.findStudentById(studentId);
-        Student student = studentMapper.toEntity(studentDto);
 
-        Path avatarPath = Path.of(avatarDir, studentId + "." + getExtension(avatarFile.getOriginalFilename()));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
+
+        Path avatarPath = Path.of(avatarDir, studentId + "." + getExtension(Objects.requireNonNull(avatarFile.getOriginalFilename())));
         Files.createDirectories(avatarPath.getParent());
         Files.deleteIfExists(avatarPath);
 
@@ -65,6 +72,9 @@ public class AvatarService {
         avatar.setData(generateImagePreview(avatarPath));
 
         avatarRepository.save(avatar);
+        student.setAvatar(avatar);
+        studentRepository.save(student);
+
     }
 
     public Avatar findAvatar(long studentId) {
@@ -96,4 +106,11 @@ public class AvatarService {
         return avatarName.substring(avatarName.lastIndexOf(".")+1);
     }
 
+    public List<AvatarDto> getAll(int page, int size) {
+        logger.info("getAll method was invoked");
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return avatarRepository.findAll(pageRequest).getContent().stream()
+                .map(avatarMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

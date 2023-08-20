@@ -1,5 +1,7 @@
 package pro.sky.newmagicschool.service;
 
+
+import org.springframework.data.domain.Pageable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -164,6 +166,23 @@ public class StudentService {
         }).start();
     }
 
+
+
+    public Integer countStudents() {
+        return studentRepository.countSchoolStudents();
+    }
+
+    public Double getAverageStudentAge() {
+        return studentRepository.countAverageAge();
+    }
+
+    public List<StudentDto> getLastStudents(int count) {
+        return studentRepository.getLastStudents(Pageable.ofSize(count))
+                .stream()
+                .map(studentMapper::toDto)
+                .collect(Collectors.toList());
+
+
     private void printStudent(Student student) {
         try {
             Thread.sleep(1000);
@@ -193,8 +212,8 @@ public class StudentService {
 
     private synchronized void printStudentSync(Student student) {
         printStudent(student);
-    }
 
+    }
 
 
     /*

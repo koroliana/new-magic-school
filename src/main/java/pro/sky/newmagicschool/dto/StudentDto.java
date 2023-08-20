@@ -4,23 +4,21 @@ public class StudentDto {
     private long id;
     private String name;
     private int age;
-    // private FacultyDtoIn faculty;
     private long facultyId;
     private String avatarUrl;
 
 
-    public StudentDto(Long id, String name, int age, long facultyId) {
+    public StudentDto(Long id, String name, int age, long facultyId, String avatarUrl) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.facultyId = facultyId;
+        this.avatarUrl = avatarUrl;
     }
 
     public StudentDto() {
 
     }
-
-
 
     public long getId() {
         return id;
@@ -45,28 +43,20 @@ public class StudentDto {
     public void setAge(int age) {
         this.age = age;
     }
-/*
-    public FacultyDtoIn getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(FacultyDtoIn faculty) {
-        this.faculty = faculty;
-    }
-
- */
-
     public long getFacultyId() {
         return facultyId;
     }
 
     public void setFacultyId(long facultyId) {
         this.facultyId=facultyId;
-
     }
 
     public String getAvatarUrl() {
         return avatarUrl;
+    }
+
+    public boolean haveAvatarUrl() {
+        return !avatarUrl.isEmpty();
     }
 
     public void setAvatarUrl(String avatarUrl) {

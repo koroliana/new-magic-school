@@ -27,8 +27,8 @@ public class StudentController {
 
     @GetMapping("/age/{age}")
     public List<StudentDto> getStudentsByAge(@PathVariable int age) {
-        List<StudentDto> students = studentService.getStudentsByAge(age);
-        return students;
+        return studentService.getStudentsByAge(age);
+
         /*
         if (students == null) {
             return ResponseEntity.notFound().build();
@@ -103,6 +103,19 @@ public class StudentController {
         else return ResponseEntity.ok(studentDto);
     }
 
+
+    @GetMapping("/count")
+    public Integer getStudentsByAge() {
+        return studentService.countStudents();
+    }
+
+    @GetMapping("/last")
+    public List<StudentDto> getLastStudents(@RequestParam(value = "count", defaultValue = "5") int count) {
+        return studentService.getLastStudents(Math.abs(count));
+    }
+
+
+
     @GetMapping("/names-start-with-a")
     public List<String> getNamesStartWithA() {
         return studentService.getNamesStartWithA();
@@ -124,13 +137,11 @@ public class StudentController {
     }
 
     /*
+
     @ExceptionHandler(Exception.class)
     public String ExceptionHandler(Exception e) {
         return e.getMessage();
-    }
-
-     */
-
+    }   
 
 
 }
