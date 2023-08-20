@@ -40,7 +40,7 @@ public class AvatarService {
 
     Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
-    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository, AvatarMapper avatarMapper) {
+    public AvatarService(AvatarRepository avatarRepository, StudentMapper studentMapper, AvatarMapper avatarMapper) 
         this.avatarRepository = avatarRepository;
         this.studentRepository = studentRepository;
         this.avatarMapper = avatarMapper;
@@ -102,7 +102,6 @@ public class AvatarService {
     }
 
     private String getExtension(String avatarName) {
-
         logger.info("getExtension method was invoked");
         return avatarName.substring(avatarName.lastIndexOf(".")+1);
     }

@@ -103,6 +103,7 @@ public class StudentController {
         else return ResponseEntity.ok(studentDto);
     }
 
+
     @GetMapping("/count")
     public Integer getStudentsByAge() {
         return studentService.countStudents();
@@ -114,13 +115,33 @@ public class StudentController {
     }
 
 
+
+    @GetMapping("/names-start-with-a")
+    public List<String> getNamesStartWithA() {
+        return studentService.getNamesStartWithA();
+    }
+
+    @GetMapping("/avg-age")
+    public double getAvgAge() {
+        return studentService.getAvgAge();
+    }
+
+    @GetMapping("/thread")
+    public void thread() {
+        studentService.taskThread();
+    }
+
+    @GetMapping("/thread-sync")
+    public void threadSync() {
+        studentService.taskThreadSync();
+    }
+
+    /*
+
     @ExceptionHandler(Exception.class)
     public String ExceptionHandler(Exception e) {
         return e.getMessage();
-    }
-
-     
-
+    }   
 
 
 }
